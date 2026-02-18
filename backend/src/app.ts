@@ -17,6 +17,19 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
+app.get('/', (_req, res) => {
+  res.json({ 
+    message: 'ShopEase API',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      products: '/api/products',
+      orders: '/api/orders',
+      users: '/api/users'
+    }
+  });
+});
+
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
