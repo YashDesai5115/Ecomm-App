@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import prisma from '../config/db.js';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
+const execAsync = promisify(exec);
 const router = Router();
 
 const seedProducts = async () => {
@@ -64,13 +67,23 @@ const seedProducts = async () => {
   return products.length;
 };
 
+router.get('/migrate', async (_req, res) => {
+  try {
+    await execAsync('npx prisma migrate deploy');
+    res.json({ message: 'Migrations applied successfully' });
+  } catch (error) {
+    console.error('Migration error:', error);
+    res.status(500).json({ error: 'Failed to run migrations', details: error });
+  }
+});
+
 router.get('/seed', async (_req, res) => {
   try {
     const count = await seedProducts();
     res.json({ message: 'Database seeded successfully', count });
   } catch (error) {
     console.error('Seed error:', error);
-    res.status(500).json({ error: 'Failed to seed database' });
+    res.status(500).json({ error: 'Failed to seed database', details: String(error) });
   }
 });
 
@@ -80,7 +93,7 @@ router.post('/seed', async (_req, res) => {
     res.json({ message: 'Database seeded successfully', count });
   } catch (error) {
     console.error('Seed error:', error);
-    res.status(500).json({ error: 'Failed to seed database' });
+    res.status(500).json({ error: 'Failed to seed database', details: String(error) });
   }
 });
 
