@@ -1,11 +1,10 @@
 name: Continuous Integration
 
 on:
-  # if any push on main branch
   push:
     branches: ["main"]
-  # if any pull request on main branch
-  pull_request: ["main"]
+  pull_request:
+    branches: ["main"]
 
 
 jobs:
@@ -23,30 +22,25 @@ jobs:
         working-directory: ./backend
 
     steps:
-      # get the code from the repo
-      - name : Checkout Code
-        uses : action/checkout             # github action to get in the repos root folder
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      # install nodejs
-      - name : Setup Node.js
-        uses : action/setup-node@3             # github action to install nodejs
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version : {{matrix.node-version}} # refernce the node-version set above
-          cache : npm          # command to install the node packages
-          cache-dependency-path : './backend/package-lock.json'          # path to the package file
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: './backend/package-lock.json'
 
 
-      # install dependencies
-      - name : Install dependencies
-        run : npm install 
+      - name: Install Dependencies
+        run: npm install
 
-      # generate prisma client
-      - name : Prisma Client
-        run : npx prisma generate 
+      - name: Generate Prisma Client
+        run: npx prisma generate
 
-      #  check the build
-      - name : Build Check
-        run : npm run build 
+      - name: Build Check
+        run: npm run build 
 
 # Job for Frontend
   frontend-ci :
@@ -61,23 +55,23 @@ jobs:
         # asking to check the code in the frontend folder
         working-directory: ./frontend
 
-    steps :
-      - name : Check Code
-        uses : actions/checkout@v4
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name : Setup Node.js ${{ matrix.node-version }}
-        uses : actions/setup-node@v4
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
         with:
-          node-version : {{matrix.node-version}}
-          cache :  'npm'         # command to install the node packages
-          cache-dependency-path :           # path to the package file
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: './frontend/package-lock.json'
 
-      - name : Install Dependencies
-        run : npm install
+      - name: Install Dependencies
+        run: npm install
 
-      - name : Run Lint
-        run :  npm run lint           # command to run lint
+      - name: Run Lint
+        run: npm run lint
 
-      - name : Build Check
-        run :  npm run build           # command to build the application 
+      - name: Build Check
+        run: npm run build 
 
