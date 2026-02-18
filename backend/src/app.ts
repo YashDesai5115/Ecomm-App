@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import productRoutes from './routes/product.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import userRoutes from './routes/user.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 dotenv.config();
 
@@ -25,7 +26,8 @@ app.get('/', (_req, res) => {
       health: '/health',
       products: '/api/products',
       orders: '/api/orders',
-      users: '/api/users'
+      users: '/api/users',
+      admin: '/api/admin'
     }
   });
 });
@@ -37,6 +39,7 @@ app.get('/health', (_req, res) => {
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err.stack);
